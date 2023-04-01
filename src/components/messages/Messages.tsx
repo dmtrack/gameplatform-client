@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { IMessagesProps } from '../../interfaces/chat.interface';
 import styles from './messages.module.css';
 

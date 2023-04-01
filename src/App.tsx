@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './styles/styles.css';
-import { Routes, Route, Link } from 'react-router-dom';
-import NotFoundPage from './components/NotFoundPage';
+import { Routes, Route } from 'react-router-dom';
 import EnterGame from './scenes/enter/EnterGame';
 import Game from './scenes/game/Game';
 import GameContext, { IGameContextProps } from './gameContext';
 import socketService from './services/socketService';
+import TicTacToeGame from './components/tictacGame/TicTacToeGame';
 
 const port = process.env.REACT_APP_SOCKET;
 
@@ -29,11 +29,12 @@ const App: React.FC = () => {
     return (
         <div className='container'>
             <GameContext.Provider value={gameContextValue}>
-                <Routes>
-                    <Route path='/' element={<EnterGame />} />
-                    <Route path='/chat' element={<Game />} />
-                    <Route path='*' element={<NotFoundPage />} />
-                </Routes>
+                {/* <Routes> */}
+                {!isInRoom && <EnterGame />}
+                {isInRoom && <Game />}
+                {/* <Route path='/' element={<EnterGame />} />
+                    <Route path='/chat' element={<Game />} /> */}
+                {/* </Routes> */}
             </GameContext.Provider>
         </div>
     );

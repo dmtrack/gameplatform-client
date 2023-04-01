@@ -1,5 +1,7 @@
 import React from 'react';
 
+type Game = 'tictactoe' | 'warships' | null;
+
 export interface IGameContextProps {
     isInRoom: boolean;
     setInRoom: (inRoom: boolean) => void;
