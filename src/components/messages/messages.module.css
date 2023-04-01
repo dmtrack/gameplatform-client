@@ -1,0 +1,63 @@
+/*
+                        SPACING SYSTEM (px)
+                        2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
+
+                        FONT SIZE SYSTEM (px)
+                        10 / 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 44 / 52 / 62 / 74 / 86 / 98
+                        */
+
+/*
+                        MAIN COLOR: #0d49d7;
+                        GREY COLOR: #343a40;
+                        */
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    row-gap: 14px;
+    height: 400px;
+}
+
+.message {
+    width: max-content;
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+    width: 100%;
+}
+
+.text {
+    padding: 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #fff;
+}
+
+.user {
+    font-size: 12px;
+    color: rgb(176, 176, 176);
+}
+
+.user {
+    align-items: flex-start;
+}
+
+.user .text {
+    background: #514c4c;
+}
+
+.user .user {
+    padding-left: 8px;
+}
+
+.me {
+    align-items: flex-end;
+}
+
+.me .text {
+    background: #0d49d7;
+}
+
+.me .user {
+    padding-right: 8px;
+}
