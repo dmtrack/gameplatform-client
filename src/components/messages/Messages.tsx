@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { IMessagesProps } from '../interfaces/chat.interface';
-import styles from '../styles/messages.module.css';
+import { IMessagesProps } from '../../interfaces/chat.interface';
+import styles from './messages.module.css';
 
 const Messages = ({ messages, username }: IMessagesProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
