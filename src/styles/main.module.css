@@ -51,3 +51,11 @@
     font-weight: 700;
     color: #fff;
 }
+
+.radio {
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+    color-scheme: dark;
+}

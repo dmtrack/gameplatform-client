@@ -1,11 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { SetStateAction, useContext, useEffect, useState } from 'react';
 import gameContext from '../../gameContext';
 import { IEnterRoom } from '../../interfaces/main.interface';
 import gameService from '../../services/gameService';
 import socketService from '../../services/socketService';
 import main from '../../styles/main.module.css';
 
-const EnterGame = () => {
+interface ITypeGameProps {
+    game: 'tictactoe' | 'seawars';
+    setGame: (game: 'tictactoe' | 'seawars') => void;
+}
+
+const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
     const [values, setValues] = useState<IEnterRoom>({
         name: '',
         room: '',
@@ -44,6 +49,9 @@ const EnterGame = () => {
         );
         if (isDisabled) e.preventDefault();
     };
+    const handleSetGame = (e: React.FormEvent<HTMLElement>) => {
+        setGame(game === 'tictactoe' ? 'seawars' : 'tictactoe');
+    };
     return (
         <div className={main.wrap}>
             <div className={main.container}>
@@ -63,7 +71,7 @@ const EnterGame = () => {
                     </div>
                     <div className={main.group}>
                         <input
-                            placeholder='room'
+                            placeholder='id'
                             type='text'
                             name='room'
                             value={values.room}
@@ -72,6 +80,25 @@ const EnterGame = () => {
                             autoComplete='off'
                             required
                         />
+                    </div>
+                    <div className={main.radio}>
+                        <label htmlFor='tictactoe'>TicTacToe</label>
+
+                        <input
+                            type='radio'
+                            name='tictactoe'
+                            value={game}
+                            checked={game === 'tictactoe'}
+                            onChange={handleSetGame}
+                        />
+                        <input
+                            type='radio'
+                            name='seawars'
+                            value={game}
+                            checked={game === 'seawars'}
+                            onChange={handleSetGame}
+                        />
+                        <label htmlFor='seawars'>Seawars</label>
                     </div>
                     <div className={main.group}>
                         <button

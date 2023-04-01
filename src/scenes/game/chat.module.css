@@ -16,6 +16,7 @@
     grid-template-columns: 2fr 1fr;
     grid-template-rows: 50px 1fr 10px;
     height: 100vh;
+    width: 90%;
 }
 
 .wrap_chat {
@@ -23,6 +24,7 @@
     /* height: 100vh; */
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
     color: #fff;
     padding: 16px 0;
@@ -31,9 +33,9 @@
 }
 
 .wrap_game {
-    width: 80%;
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
     color: #fff;
     padding: 16px 0;
@@ -127,7 +129,7 @@
     font-size: 14px;
     background: rgb(35, 35, 35);
     padding: 32px;
-    overflow: scroll;
+    overflow: auto;
     color-scheme: dark;
     overflow-x: hidden;
 }

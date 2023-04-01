@@ -5,18 +5,21 @@ import EnterGame from './scenes/enter/EnterGame';
 import Game from './scenes/game/Game';
 import GameContext, { IGameContextProps } from './gameContext';
 import socketService from './services/socketService';
-import TicTacToeGame from './components/tictacGame/TicTacToeGame';
+import NotFoundPage from './components/NotFoundPage';
 
 const port = process.env.REACT_APP_SOCKET;
 
 const App: React.FC = () => {
     const [isInRoom, setInRoom] = useState(false);
+    const [playerSymbol, setPlayerSymbol] = useState<'x' | 'o'>('x');
+    const [game, setGame] = useState<'tictactoe' | 'seawars'>('tictactoe');
 
     const connectSocket = async () => {
         const socket = await socketService.connect(`${port}`).catch((err) => {
             console.log('Error: ', err);
         });
     };
+    console.log(game);
 
     useEffect(() => {
         connectSocket();
@@ -24,17 +27,17 @@ const App: React.FC = () => {
     const gameContextValue: IGameContextProps = {
         isInRoom,
         setInRoom,
+        playerSymbol,
+        setPlayerSymbol,
+        game,
+        setGame,
     };
 
     return (
         <div className='container'>
             <GameContext.Provider value={gameContextValue}>
-                {/* <Routes> */}
-                {!isInRoom && <EnterGame />}
-                {isInRoom && <Game />}
-                {/* <Route path='/' element={<EnterGame />} />
-                    <Route path='/chat' element={<Game />} /> */}
-                {/* </Routes> */}
+                {!isInRoom && <EnterGame game={game} setGame={setGame} />}
+                {isInRoom && game === 'tictactoe' ? <Game /> : <NotFoundPage />}
             </GameContext.Provider>
         </div>
     );

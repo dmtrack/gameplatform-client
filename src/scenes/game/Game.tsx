@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IServiceMessage, LoginParams } from '../../interfaces/chat.interface';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import styles from './chat.module.css';
 import icon from '../../images/emoji.svg';
 import Messages from '../../components/messages/Messages';
-import TicTacToeGame from '../../components/tictacGame/TicTacToeGame';
+import { useState } from 'react';
+import { TicTacToe } from '../../components/tictactoeGame';
 
 const Game = () => {
     const { search } = useLocation();
@@ -67,7 +67,7 @@ const Game = () => {
             <div className={styles.core}>
                 <div className={styles.nav}></div>
                 <div className={styles.wrap_game}>
-                    {/* <TicTacToeGame /> */}
+                    <TicTacToe />
                 </div>
 
                 <div className={styles.wrap_chat}>
