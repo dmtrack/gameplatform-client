@@ -19,28 +19,13 @@ class MessageService {
     ) {
         console.log('hello');
 
-        socket.on(EVENTS.CLIENT.on_message, (params) => listener(params));
+        socket
+            .off(EVENTS.CLIENT.on_message)
+            .on(EVENTS.CLIENT.on_message, (params: IServiceMessage) =>
+                listener(params)
+            );
     }
 
-    // public async gameWin(socket: Socket, message: string) {
-    //     socket.emit(EVENTS.CLIENT.game_win, { message });
-    // }
 
-    // public async onGameWin(
-    //     socket: Socket,
-    //     listener: (message: string) => void
-    // ) {
-    //     socket.on(EVENTS.CLIENT.on_game_win, ({ message }) =>
-    //         listener(message)
-    //     );
-    // }
-
-    // public async onStartGame(
-    //     socket: Socket,
-    //     listener: (options: IStartGame) => void
-    // ) {
-    //     socket.on(EVENTS.CLIENT.start_game, listener);
-    // }
-    // }
 }
 export default new MessageService();

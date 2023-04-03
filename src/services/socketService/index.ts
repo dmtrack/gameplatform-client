@@ -12,12 +12,16 @@ class SocketService {
             this.socket = io(url);
             if (!this.socket) return reject;
 
-            this.socket?.on(EVENTS.CLIENT.connect, () => {
-                resolve(this.socket as Socket);
-            });
-            this.socket.on(EVENTS.CLIENT.connect_error, (err) => {
-                console.log('connection error:', err);
-            });
+            this.socket
+                ?.off(EVENTS.CLIENT.connect)
+                .on(EVENTS.CLIENT.connect, () => {
+                    resolve(this.socket as Socket);
+                });
+            this.socket
+                .off(EVENTS.CLIENT.connect_error)
+                .on(EVENTS.CLIENT.connect_error, (err: any) => {
+                    console.log('connection error:', err);
+                });
         });
     }
 }

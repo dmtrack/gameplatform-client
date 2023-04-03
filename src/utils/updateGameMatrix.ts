@@ -2,8 +2,8 @@ import { useContext } from 'react';
 import { IPlayMatrix } from '../components/tictactoeGame';
 import checkGameState from './checkGameState';
 import socketService from '../services/socketService';
+import gameContext from '../context/gameContext';
 import gameService from '../services/gameService';
-import gameContext from '../gameContext';
 
 const UpdateGameMatrix = (
     setPlayerTurn: (turn: boolean) => void,

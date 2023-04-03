@@ -11,12 +11,16 @@ class GameService {
     ): Promise<boolean> {
         return new Promise((resolve, reject) => {
             socket.emit(EVENTS.CLIENT.join_game, { room, name });
-            socket.on(EVENTS.CLIENT.room_joined, () => {
-                resolve(true);
-            });
-            socket.on(EVENTS.CLIENT.room_join_error, ({ error }) =>
-                reject(error)
-            );
+            socket
+                .off(EVENTS.CLIENT.room_joined)
+                .on(EVENTS.CLIENT.room_joined, () => {
+                    resolve(true);
+                });
+            socket
+                .off(EVENTS.CLIENT.room_join_error)
+                .on(EVENTS.CLIENT.room_join_error, ({ error }: any) =>
+                    reject(error)
+                );
         });
     }
     public async updateGame(socket: Socket, gameMatrix: IPlayMatrix) {
@@ -26,9 +30,11 @@ class GameService {
         socket: Socket,
         listener: (matrix: IPlayMatrix) => void
     ) {
-        socket.on(EVENTS.CLIENT.on_game_update, ({ matrix }) =>
-            listener(matrix)
-        );
+        socket
+            .off(EVENTS.CLIENT.on_game_update)
+            .on(EVENTS.CLIENT.on_game_update, ({ matrix }: any) =>
+                listener(matrix)
+            );
     }
 
     public async gameWin(socket: Socket, message: string) {

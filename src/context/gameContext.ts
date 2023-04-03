@@ -1,4 +1,7 @@
+import { connect } from 'http2';
 import React, { SetStateAction } from 'react';
+import { Socket } from 'socket.io-client';
+import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 
 type Game = 'tictactoe' | 'warships' | null;
 
