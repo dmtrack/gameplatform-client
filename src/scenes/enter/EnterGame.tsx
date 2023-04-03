@@ -10,7 +10,8 @@ interface ITypeGameProps {
     setGame: (game: 'tictactoe' | 'seawars') => void;
 }
 
-const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
+// const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
+const EnterGame = () => {
     const [values, setValues] = useState<IEnterRoom>({
         name: '',
         room: '',
@@ -49,9 +50,9 @@ const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
         );
         if (isDisabled) e.preventDefault();
     };
-    const handleSetGame = (e: React.FormEvent<HTMLElement>) => {
-        setGame(game === 'tictactoe' ? 'seawars' : 'tictactoe');
-    };
+    // const handleSetGame = (e: React.FormEvent<HTMLElement>) => {
+    //     setGame(game === 'tictactoe' ? 'seawars' : 'tictactoe');
+    // };
     return (
         <div className={main.wrap}>
             <div className={main.container}>
@@ -81,7 +82,7 @@ const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
                             required
                         />
                     </div>
-                    <div className={main.radio}>
+                    {/* <div className={main.radio}>
                         <label htmlFor='tictactoe'>TicTacToe</label>
 
                         <input
@@ -99,7 +100,7 @@ const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
                             onChange={handleSetGame}
                         />
                         <label htmlFor='seawars'>Seawars</label>
-                    </div>
+                    </div> */}
                     <div className={main.group}>
                         <button
                             className={main.button}

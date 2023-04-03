@@ -9,6 +9,10 @@ export interface IGameContextProps {
     setPlayerSymbol: (symbol: 'x' | 'o') => void;
     game: 'tictactoe' | 'seawars';
     setGame: (game: 'tictactoe' | 'seawars') => void;
+    isPlayerTurn: boolean;
+    setPlayerTurn: (turn: boolean) => void;
+    isGameStarted: boolean;
+    setGameStarted: (started: boolean) => void;
 }
 
 const defaultState: IGameContextProps = {
@@ -18,6 +22,10 @@ const defaultState: IGameContextProps = {
     setPlayerSymbol: () => {},
     game: 'tictactoe',
     setGame: () => {},
+    isPlayerTurn: false,
+    setPlayerTurn: () => {},
+    isGameStarted: false,
+    setGameStarted: () => {},
 };
 
 export default React.createContext(defaultState);
