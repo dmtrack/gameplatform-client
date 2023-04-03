@@ -11,10 +11,11 @@ const port = process.env.REACT_APP_SOCKET;
 
 const App: React.FC = () => {
     const [isInRoom, setInRoom] = useState(false);
-    const [playerSymbol, setPlayerSymbol] = useState<'x' | 'o'>('x');
+    const [playerSymbol, setPlayerSymbol] = useState<'x' | 'o'>('o');
     const [game, setGame] = useState<'tictactoe' | 'seawars'>('tictactoe');
     const [isPlayerTurn, setPlayerTurn] = useState(false);
     const [isGameStarted, setGameStarted] = useState(false);
+    const [users, setUsers] = useState<string[]>([]);
 
     const connectSocket = async () => {
         const socket = await socketService.connect(`${port}`).catch((err) => {
@@ -29,6 +30,8 @@ const App: React.FC = () => {
     console.log('render');
 
     const gameContextValue: IGameContextProps = {
+        users,
+        setUsers,
         isInRoom,
         setInRoom,
         playerSymbol,

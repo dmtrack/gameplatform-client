@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import gameContext from '../../gameContext';
 import gameService from '../../services/gameService';
 import socketService from '../../services/socketService';
+import checkGameState from '../../utils/checkGameState';
+import updateGameMatrix from '../../utils/updateGameMatrix';
 
 const GameContainer = styled.div`
     display: flex;
@@ -70,7 +72,8 @@ export type IPlayMatrix = Array<Array<string | null>>;
 
 export interface IStartGame {
     start: boolean;
-    symbol: 'o' | 'x';
+    symbol: 'x' | 'o';
+    message?: string;
 }
 
 export function TicTacToe() {
@@ -89,98 +92,13 @@ export function TicTacToe() {
         setGameStarted,
     } = useContext(gameContext);
 
-    const checkGameState = (matrix: IPlayMatrix) => {
-        for (let i = 0; i < matrix.length; i++) {
-            let row = [];
-            for (let j = 0; j < matrix[i].length; j++) {
-                row.push(matrix[i][j]);
-            }
-
-            if (row.every((value) => value && value === playerSymbol)) {
-                return [true, false];
-            } else if (row.every((value) => value && value !== playerSymbol)) {
-                return [false, true];
-            }
-        }
-
-        for (let i = 0; i < matrix.length; i++) {
-            let column = [];
-            for (let j = 0; j < matrix[i].length; j++) {
-                column.push(matrix[j][i]);
-            }
-
-            if (column.every((value) => value && value === playerSymbol)) {
-                return [true, false];
-            } else if (
-                column.every((value) => value && value !== playerSymbol)
-            ) {
-                return [false, true];
-            }
-        }
-
-        if (matrix[1][1]) {
-            if (
-                matrix[0][0] === matrix[1][1] &&
-                matrix[2][2] === matrix[1][1]
-            ) {
-                if (matrix[1][1] === playerSymbol) return [true, false];
-                else return [false, true];
-            }
-
-            if (
-                matrix[2][0] === matrix[1][1] &&
-                matrix[0][2] === matrix[1][1]
-            ) {
-                if (matrix[1][1] === playerSymbol) return [true, false];
-                else return [false, true];
-            }
-        }
-
-        //Check for a tie
-        if (matrix.every((m) => m.every((v) => v !== null))) {
-            return [true, true];
-        }
-
-        return [false, false];
-    };
-
-    const updateGameMatrix = (
-        column: number,
-        row: number,
-        symbol: 'x' | 'o'
-    ) => {
-        const newMatrix = [...matrix];
-
-        if (
-            newMatrix[row][column] === null ||
-            newMatrix[row][column] === 'null'
-        ) {
-            newMatrix[row][column] = symbol;
-            setMatrix(newMatrix);
-        }
-
-        if (socketService.socket) {
-            gameService.updateGame(socketService.socket, newMatrix);
-            const [currentPlayerWon, otherPlayerWon] =
-                checkGameState(newMatrix);
-            if (currentPlayerWon && otherPlayerWon) {
-                gameService.gameWin(socketService.socket, 'The Game is a TIE!');
-                alert('The Game is a TIE!');
-            } else if (currentPlayerWon && !otherPlayerWon) {
-                gameService.gameWin(socketService.socket, 'You Lost!');
-                alert('You Won!');
-            }
-
-            setPlayerTurn(false);
-        }
-    };
-    console.log('playerSymbol:', playerSymbol, 'playerTurn:', isPlayerTurn);
-
     const handleGameUpdate = () => {
         if (socketService.socket)
             gameService.onGameUpdate(socketService.socket, (newMatrix) => {
+                if (!isGameStarted) setGameStarted(true);
+
                 setMatrix(newMatrix);
-                checkGameState(newMatrix);
+                checkGameState(newMatrix, playerSymbol);
                 setPlayerTurn(true);
             });
     };
@@ -188,8 +106,8 @@ export function TicTacToe() {
     const handleGameStart = () => {
         if (socketService.socket)
             gameService.onStartGame(socketService.socket, (options) => {
-                setGameStarted(true);
                 setPlayerSymbol(options.symbol);
+                setGameStarted(true);
                 if (options.start) setPlayerTurn(true);
                 else setPlayerTurn(false);
             });
@@ -198,15 +116,15 @@ export function TicTacToe() {
     const handleGameWin = () => {
         if (socketService.socket)
             gameService.onGameWin(socketService.socket, (message) => {
-                console.log('Here', message);
+                // console.log('Here', message);
                 setPlayerTurn(false);
                 alert(message);
             });
     };
 
     useEffect(() => {
-        handleGameStart();
         handleGameUpdate();
+        handleGameStart();
         handleGameWin();
     }, []);
 
@@ -227,6 +145,10 @@ export function TicTacToe() {
                                 borderTop={rowIdx > 0}
                                 onClick={() =>
                                     updateGameMatrix(
+                                        setPlayerTurn,
+                                        playerSymbol,
+                                        matrix,
+                                        setMatrix,
                                         columnIdx,
                                         rowIdx,
                                         playerSymbol

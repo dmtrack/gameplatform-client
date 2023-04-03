@@ -15,10 +15,8 @@ export interface IUser {
 }
 
 export interface IServiceMessage {
-    user: {
-        name: string;
-        message: string;
-    };
+    name: string;
+    message: string;
 }
 
 export interface IMessagesProps {

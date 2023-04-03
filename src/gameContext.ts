@@ -3,6 +3,8 @@ import React, { SetStateAction } from 'react';
 type Game = 'tictactoe' | 'warships' | null;
 
 export interface IGameContextProps {
+    users: string[];
+    setUsers: (users: string[]) => void;
     isInRoom: boolean;
     setInRoom: (inRoom: boolean) => void;
     playerSymbol: 'x' | 'o';
@@ -16,9 +18,11 @@ export interface IGameContextProps {
 }
 
 const defaultState: IGameContextProps = {
+    users: [],
+    setUsers: () => {},
     isInRoom: false,
     setInRoom: () => {},
-    playerSymbol: 'x',
+    playerSymbol: 'o',
     setPlayerSymbol: () => {},
     game: 'tictactoe',
     setGame: () => {},

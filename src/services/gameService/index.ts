@@ -30,12 +30,6 @@ class GameService {
             listener(matrix)
         );
     }
-    public async onStartGame(
-        socket: Socket,
-        listener: (options: IStartGame) => void
-    ) {
-        socket.on(EVENTS.CLIENT.start_game, listener);
-    }
 
     public async gameWin(socket: Socket, message: string) {
         socket.emit(EVENTS.CLIENT.game_win, { message });
@@ -43,11 +37,25 @@ class GameService {
 
     public async onGameWin(
         socket: Socket,
-        listiner: (message: string) => void
+        listener: (message: string) => void
     ) {
         socket.on(EVENTS.CLIENT.on_game_win, ({ message }) =>
-            listiner(message)
+            listener(message)
         );
+    }
+
+    public async onStartGame(
+        socket: Socket,
+        listener: (options: IStartGame) => void
+    ) {
+        socket.on(EVENTS.CLIENT.start_game, listener);
+    }
+
+    public async onSecondPlayerJoin(
+        socket: Socket,
+        listener: (options: IStartGame) => void
+    ) {
+        socket.on(EVENTS.CLIENT.start_game_second, listener);
     }
 }
 

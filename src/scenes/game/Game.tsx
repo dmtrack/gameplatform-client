@@ -1,63 +1,68 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { IServiceMessage, LoginParams } from '../../interfaces/chat.interface';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import styles from './chat.module.css';
 import icon from '../../images/emoji.svg';
 import Messages from '../../components/messages/Messages';
-import { useState } from 'react';
+import { FormEvent, useContext, useEffect, useState } from 'react';
 import { TicTacToe } from '../../components/tictactoeGame';
+import socketService from '../../services/socketService';
+import gameContext from '../../gameContext';
+import messageService from '../../services/messageService';
 
 const Game = () => {
     const { search } = useLocation();
-    const [params, setParams] = useState<LoginParams>({ room: '', user: '' });
+    const [params, setParams] = useState<LoginParams>({ room: '', name: '' });
     const [state, setState] = useState<IServiceMessage[]>([]);
     const [message, setMessage] = useState<string>('');
     const [isOpen, setOpen] = useState<boolean>(false);
-    const [users, setUsers] = useState<string[]>([]);
-    // useEffect(() => {
-    //     const searchParams: LoginParams = Object.fromEntries(
-    //         new URLSearchParams(search)
-    //     );
-    //     setParams(searchParams);
-    //     socket.emit('join', searchParams);
-    // }, [search]);
 
-    // useEffect(() => {
-    //     socket.on('message', ({ data }) => {
-    //         setState((_state) => [..._state, data]);
-    //     });
-    // }, []);
+    useEffect(() => {
+        const searchParams: LoginParams = Object.fromEntries(
+            new URLSearchParams(search)
+        );
+        setParams(searchParams);
+    }, []);
 
-    // useEffect(() => {
-    //     socket.on('joinRoom', ({ data }) => {
-    //         setUsers(data.users);
-    //     });
-    // }, []);
+    const { setInRoom, setGameStarted } = useContext(gameContext);
 
-    // useEffect(() => {
-    //     return () => {
-    //         console.log('exit');
+    const handleGetMessage = () => {
+        if (socketService.socket)
+            messageService.onMessage(socketService.socket, (params) => {
+                setState((_state) => [..._state, params]);
+            });
+    };
 
-    //         socket.removeAllListeners();
-    //     };
-    // }, []);
+    useEffect(() => {
+        handleGetMessage();
+    }, []);
+
     const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
         setMessage(e.currentTarget.value);
     };
 
-    // const handleLeftRoom = () => {
-    //     socket.emit('leftRoom', { params });
-    //     navigate('/');
-    // };
-    // console.log(users);
+    const handleLeftRoom = () => {
+        const socket = socketService.socket;
+        setInRoom(false);
+        setGameStarted(false);
+        socket?.disconnect();
+    };
 
-    // const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault();
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-    //     if (!message) return;
-    //     socket.emit('sendMessage', { message, params });
-    //     setMessage('');
-    // };
+        if (!message) return;
+        if (socketService.socket) {
+            console.log(params);
+
+            messageService.sendMessage(socketService.socket, {
+                message,
+                name: params.name,
+                room: params.room,
+            });
+            setMessage('');
+        }
+    };
 
     const onEmojiClick = (emojiData: string) =>
         setMessage(`${message} ${emojiData}`);
@@ -73,19 +78,19 @@ const Game = () => {
                 <div className={styles.wrap_chat}>
                     <div className={styles.header}>
                         <div className={styles.title}>id:{params?.room}</div>
-                        <div className={styles.users}>
-                            {/* {users.length} users in this room */}
-                        </div>
-                        {/* <button className={styles.left} onClick={handleLeftRoom}>
-                        Left the room
-                    </button> */}
+                        <div className={styles.users}></div>
+                        <button
+                            className={styles.left}
+                            onClick={handleLeftRoom}>
+                            Left the room
+                        </button>
                     </div>
 
                     <div className={styles.messages}>
                         <Messages messages={state} username={params.name} />
                     </div>
 
-                    <form className={styles.form}>
+                    <form className={styles.form} onSubmit={handleSubmit}>
                         <div className={styles.input}>
                             <input
                                 placeholder='what do you want to say?'
