@@ -10,7 +10,7 @@ const Messages = ({ messages, username }: IMessagesProps) => {
     }, [messages]);
     return (
         <div className={styles.messages}>
-            {messages.map(({ user }, i) => {
+            {messages.map((user, i) => {
                 const itsMe =
                     user.name.trim().toLowerCase() ===
                     username.trim().toLowerCase();

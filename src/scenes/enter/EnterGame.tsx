@@ -4,23 +4,28 @@ import { IEnterRoom } from '../../interfaces/main.interface';
 import gameService from '../../services/gameService';
 import socketService from '../../services/socketService';
 import main from '../../styles/main.module.css';
+import messageService from '../../services/messageService';
+import { Link } from 'react-router-dom';
 
 interface ITypeGameProps {
     game: 'tictactoe' | 'seawars';
     setGame: (game: 'tictactoe' | 'seawars') => void;
 }
 
-const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
+// const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
+const EnterGame = () => {
     const [values, setValues] = useState<IEnterRoom>({
         name: '',
         room: '',
     });
     const [isJoining, setJoining] = useState(false);
-    const { setInRoom, isInRoom } = useContext(gameContext);
+    const { setInRoom, isInRoom, users, setUsers } = useContext(gameContext);
 
-    const joinRoom = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-
+    const joinRoom = async (e: React.MouseEvent<HTMLElement>) => {
+        const isDisabled = Object.values(values).some(
+            (value: string) => !value
+        );
+        if (isDisabled) e.preventDefault();
         const socket = socketService.socket;
 
         if (!values.room || values.room.trim() === '' || !socket) return;
@@ -32,11 +37,11 @@ const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
 
                 alert(err);
             });
+        await messageService.joinChat(socket, values.room, values.name);
         console.log('join', joined);
         console.log(joined, 'joined');
 
         if (joined) setInRoom(true);
-        setJoining(false);
     };
 
     const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -49,9 +54,9 @@ const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
         );
         if (isDisabled) e.preventDefault();
     };
-    const handleSetGame = (e: React.FormEvent<HTMLElement>) => {
-        setGame(game === 'tictactoe' ? 'seawars' : 'tictactoe');
-    };
+    // const handleSetGame = (e: React.FormEvent<HTMLElement>) => {
+    //     setGame(game === 'tictactoe' ? 'seawars' : 'tictactoe');
+    // };
     return (
         <div className={main.wrap}>
             <div className={main.container}>
@@ -81,7 +86,7 @@ const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
                             required
                         />
                     </div>
-                    <div className={main.radio}>
+                    {/* <div className={main.radio}>
                         <label htmlFor='tictactoe'>TicTacToe</label>
 
                         <input
@@ -99,16 +104,17 @@ const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
                             onChange={handleSetGame}
                         />
                         <label htmlFor='seawars'>Seawars</label>
-                    </div>
-                    <div className={main.group}>
-                        <button
-                            className={main.button}
-                            onClick={joinRoom}
-                            disabled={isJoining}>
-                            {' '}
+                    </div> */}
+                    {/* <div className={main.group}> */}
+                    <Link
+                        to={`/chat/?name=${values.name}&room=${values.room}`}
+                        className={main.group}
+                        onClick={joinRoom}>
+                        <button className={main.button} disabled={isJoining}>
                             {isJoining ? 'Joining...' : 'Join'}
                         </button>
-                    </div>
+                    </Link>
+                    {/* </div> */}
                 </form>
             </div>
         </div>
