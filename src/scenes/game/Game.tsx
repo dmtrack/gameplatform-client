@@ -7,7 +7,7 @@ import Messages from '../../components/messages/Messages';
 import { FormEvent, useContext, useEffect, useState } from 'react';
 import { TicTacToe } from '../../components/tictactoeGame';
 import socketService from '../../services/socketService';
-import gameContext from '../../gameContext';
+import gameContext from '../../context/gameContext';
 import messageService from '../../services/messageService';
 
 const Game = () => {
@@ -53,8 +53,6 @@ const Game = () => {
 
         if (!message) return;
         if (socketService.socket) {
-            console.log(params);
-
             messageService.sendMessage(socketService.socket, {
                 message,
                 name: params.name,
@@ -77,7 +75,9 @@ const Game = () => {
 
                 <div className={styles.wrap_chat}>
                     <div className={styles.header}>
-                        <div className={styles.title}>id:{params?.room}</div>
+                        <div className={styles.title}>
+                            Game id:{params?.room}
+                        </div>
                         <div className={styles.users}></div>
                         <button
                             className={styles.left}

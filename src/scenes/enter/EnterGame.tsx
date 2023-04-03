@@ -1,5 +1,11 @@
-import React, { SetStateAction, useContext, useEffect, useState } from 'react';
-import gameContext from '../../gameContext';
+import React, {
+    SetStateAction,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
+import gameContext from '../../context/gameContext';
 import { IEnterRoom } from '../../interfaces/main.interface';
 import gameService from '../../services/gameService';
 import socketService from '../../services/socketService';
@@ -12,14 +18,25 @@ interface ITypeGameProps {
     setGame: (game: 'tictactoe' | 'seawars') => void;
 }
 
-// const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
-const EnterGame = () => {
+const EnterGame = ({ game = 'tictactoe', setGame }: ITypeGameProps) => {
     const [values, setValues] = useState<IEnterRoom>({
         name: '',
         room: '',
     });
+    const port = process.env.REACT_APP_SOCKET;
+
+    const connectSocket = useCallback(async () => {
+        await socketService.connect(`${port}`).catch((err) => {
+            console.log('Error: ', err);
+        });
+    }, []);
+
+    useEffect(() => {
+        connectSocket();
+    }, []);
+
     const [isJoining, setJoining] = useState(false);
-    const { setInRoom, isInRoom, users, setUsers } = useContext(gameContext);
+    const { setInRoom } = useContext(gameContext);
 
     const joinRoom = async (e: React.MouseEvent<HTMLElement>) => {
         const isDisabled = Object.values(values).some(
@@ -38,8 +55,6 @@ const EnterGame = () => {
                 alert(err);
             });
         await messageService.joinChat(socket, values.room, values.name);
-        console.log('join', joined);
-        console.log(joined, 'joined');
 
         if (joined) setInRoom(true);
     };
@@ -48,15 +63,9 @@ const EnterGame = () => {
         setValues({ ...values, [e.currentTarget.name]: e.currentTarget.value });
     };
 
-    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-        const isDisabled = Object.values(values).some(
-            (value: string) => !value
-        );
-        if (isDisabled) e.preventDefault();
+    const handleSetGame = (e: React.FormEvent<HTMLElement>) => {
+        setGame(game === 'tictactoe' ? 'seawars' : 'tictactoe');
     };
-    // const handleSetGame = (e: React.FormEvent<HTMLElement>) => {
-    //     setGame(game === 'tictactoe' ? 'seawars' : 'tictactoe');
-    // };
     return (
         <div className={main.wrap}>
             <div className={main.container}>
@@ -86,7 +95,7 @@ const EnterGame = () => {
                             required
                         />
                     </div>
-                    {/* <div className={main.radio}>
+                    <div className={main.radio}>
                         <label htmlFor='tictactoe'>TicTacToe</label>
 
                         <input
@@ -104,17 +113,19 @@ const EnterGame = () => {
                             onChange={handleSetGame}
                         />
                         <label htmlFor='seawars'>Seawars</label>
-                    </div> */}
-                    {/* <div className={main.group}> */}
-                    <Link
-                        to={`/chat/?name=${values.name}&room=${values.room}`}
-                        className={main.group}
-                        onClick={joinRoom}>
-                        <button className={main.button} disabled={isJoining}>
-                            {isJoining ? 'Joining...' : 'Join'}
-                        </button>
-                    </Link>
-                    {/* </div> */}
+                    </div>
+                    <div className={main.group}>
+                        <Link
+                            to={`/chat/?name=${values.name}&room=${values.room}`}
+                            className={main.group}
+                            onClick={joinRoom}>
+                            <button
+                                className={main.button}
+                                disabled={isJoining}>
+                                {isJoining ? 'Joining...' : 'Join'}
+                            </button>
+                        </Link>
+                    </div>
                 </form>
             </div>
         </div>
